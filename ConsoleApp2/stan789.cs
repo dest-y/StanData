@@ -26,6 +26,13 @@ namespace ConsoleApp2
             IpAddress = ipAddress;
             Counter = counter;
             Status = status;
+
+            int connectionResult = client.ConnectTo(IpAddress, 0, 3); //10-11 стан 
+            if (connectionResult == 0)
+            {
+                Console.WriteLine("Connection OK");
+                PrintName();
+            }
         }
 
         public void getData() 
@@ -37,14 +44,9 @@ namespace ConsoleApp2
 
             client.SetConnectionType(S7Client.CONNTYPE_BASIC);
 
-            int connectionResult = client.ConnectTo(IpAddress, 0, 3); //10-11 стан 
-            if (connectionResult == 0)
-            {
-                Console.WriteLine("Connection OK");
-                PrintName();
-            }
 
-            Console.WriteLine("Начало данных");
+
+
             ireadResult = client.DBRead(66, 210, 4, dbuffer);
             int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
             Counter = tmp;
@@ -66,24 +68,29 @@ namespace ConsoleApp2
             
             WireBreak = mb142_0;
 
-            Console.WriteLine("Длина счетчика : " + Counter);
-            Console.Write("Замена Волок: ");
-            Console.WriteLine(DrawingChange);
-            Console.Write("Стан в работе(если false значит ON): ");
-            Console.WriteLine(Status);
-            Console.Write("Сброс счетчика: ");
-            Console.WriteLine(CointerErase);
-            Console.Write("Обрыв проволоки: ");
-            Console.WriteLine(WireBreak);
-            Console.WriteLine("Конец данных");
+            //Console.WriteLine("Длина счетчика : " + Counter);
+            //Console.Write("Замена Волок: ");
+            //Console.WriteLine(DrawingChange);
+            //Console.Write("Стан в работе(если false значит ON): ");
+            //Console.WriteLine(Status);
+            //Console.Write("Сброс счетчика: ");
+            //Console.WriteLine(CointerErase);
+            //Console.Write("Обрыв проволоки: ");
+            //Console.WriteLine(WireBreak);
+            //Console.WriteLine("Конец данных");
             Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}; Обрыв: {3}; Смена волок: {4};", Name, Counter, !Status, WireBreak, CointerErase);
 
-            client.Disconnect();
+
         }
 
         public void PrintName()
         {
             Console.WriteLine("Имя Стана: {0}", Name);
+        }
+
+        public void ClientDisc()
+        {
+            client.Disconnect();
         }
     }
 }
