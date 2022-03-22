@@ -54,8 +54,8 @@ namespace ConsoleApp2
             DrawingChange = D01DB251DBX;
 
             breadResult = client.MBRead(4, 4, dbuffer);
-            bool mb4_0 = S7.GetBitAt(buffer, 0, 0);
-            bool mb7_0 = S7.GetBitAt(buffer, 3, 0);
+            bool mb4_0 = S7.GetBitAt(dbuffer, 0, 0);
+            bool mb7_0 = S7.GetBitAt(dbuffer, 3, 0);
             
             Status = mb4_0;
             CointerErase = mb7_0;
