@@ -50,17 +50,14 @@ namespace ConsoleApp2
             Counter = tmp;
 
             breadResult = client.DBRead(251, 8, 2, buffer);
-            bool D01DB251DBX = S7.GetBitAt(buffer, 0, 1);
+            bool D01DB251DBX = S7.GetBitAt(buffer, 1, 1);
             DrawingChange = D01DB251DBX;
 
             breadResult = client.MBRead(4, 4, dbuffer);
-            bool mb4_0 = S7.GetBitAt(buffer, 0, 3);
-            bool mb7_0 = S7.GetBitAt(buffer, 0, 0);
+            bool mb4_0 = S7.GetBitAt(buffer, 0, 0);
+            bool mb7_0 = S7.GetBitAt(buffer, 3, 0);
             
             Status = mb4_0;
-            
-
-            
             CointerErase = mb7_0;
 
             breadResult = client.MBRead(142, 2, buffer);
