@@ -30,6 +30,7 @@ bool getStan789Data()
         stan7.ClientDisc();
         stan8.ClientDisc();
         stan9.ClientDisc();
+        Console.WriteLine("getStan789Data = FALSE!");
         return false;
     }
 }
