@@ -4,7 +4,7 @@ using Sharp7;
 Console.WriteLine("Begin");
 
 Stan789 stan7 = new Stan789("7 стан", "140.80.1.1");
-Stan789 stan8 = new Stan789("8 стан", "140.80.1.2");
+Stan789 stan8 = new Stan789("8 стан", "140.80.1.32");
 Stan789 stan9 = new Stan789("9 стан", "140.80.1.4");
 
 Console.WriteLine("Начало данных");

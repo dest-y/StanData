@@ -28,6 +28,8 @@ namespace ConsoleApp2
             Counter = counter;
             Status = status;
 
+            client.SetConnectionType(S7Client.CONNTYPE_BASIC);
+
             connectionResult = client.ConnectTo(IpAddress, 0, 3); //10-11 стан 
             if (connectionResult == 0)
             {
@@ -38,32 +40,34 @@ namespace ConsoleApp2
 
         public bool getData() 
         {
+            connectionResult = client.Connect();
             try
             {
                 if (connectionResult == 0)
                 {
                     var dbuffer = new byte[4];
                     var buffer = new byte[2];
-                    int ireadResult;
-                    int breadResult;
+                    int CointerReadResult;
+                    int StatusReadResult;
+                    int DrawingChangeReadResult;
+                    int WireBreakReadResult;
+                    int ReadResult;
 
-                    client.SetConnectionType(S7Client.CONNTYPE_BASIC);
-
-                    ireadResult = client.DBRead(66, 210, 4, dbuffer);
+                    CointerReadResult = client.DBRead(66, 210, 4, dbuffer);
                     int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
                     Counter = tmp;
 
-                    breadResult = client.DBRead(251, 8, 2, buffer);
+                    DrawingChangeReadResult = client.DBRead(251, 8, 2, buffer);
                     bool D01DB251DBX = S7.GetBitAt(buffer, 1, 1);
                     DrawingChange = D01DB251DBX;
 
-                    breadResult = client.MBRead(4, 4, dbuffer);
+                    StatusReadResult = client.MBRead(4, 4, dbuffer);
                     bool mb4_0 = S7.GetBitAt(dbuffer, 0, 0);
                     bool mb7_0 = S7.GetBitAt(dbuffer, 3, 0);
                     Status = mb4_0;
                     CointerErase = mb7_0;
 
-                    breadResult = client.MBRead(142, 2, buffer);
+                    WireBreakReadResult = client.MBRead(142, 2, buffer);
                     bool mb142_0 = S7.GetBitAt(buffer, 0, 0);
                     WireBreak = mb142_0;
 
@@ -77,20 +81,25 @@ namespace ConsoleApp2
                     //Console.Write("Обрыв проволоки: ");
                     //Console.WriteLine(WireBreak);
                     //Console.WriteLine("Конец данных");
-                    Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};", Name, Counter, !Status, WireBreak, CointerErase);
+                    ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
+                    if (ReadResult == 0)
+                    {
+                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};", Name, Counter, !Status, WireBreak, CointerErase);
+                    }
+                   
+
 
                     return true;
                 }
                 else 
                 {
-                    connectionResult = client.ConnectTo(IpAddress, 0, 3);
                     Logger.Info("Имя стана: {0} - Недоступен; Попытка переподключения - Connection result = {1}", Name, connectionResult);
+                    client.Disconnect();
                     return false;
                 }
             }
             catch 
             {
-                client.Disconnect();
                 return false;
             }
         }
