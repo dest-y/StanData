@@ -11,13 +11,13 @@ namespace ConsoleApp2
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private string Name;
+        public string Name;
         private string IpAddress;
-        private int Counter;
-        private bool Status;
-        private bool WireBreak;
-        private bool DrawingChange;
-        private bool CointerErase = false;
+        public int Counter;
+        public bool Status;
+        public bool WireBreak;
+        public bool DrawingChange;
+        public bool CointerErase = false;
         int connectionResult;
         S7Client client = new();
 
@@ -84,11 +84,8 @@ namespace ConsoleApp2
                     ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};", Name, Counter, !Status, WireBreak, CointerErase);
+                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase);
                     }
-                   
-
-
                     return true;
                 }
                 else 
@@ -100,13 +97,16 @@ namespace ConsoleApp2
             }
             catch 
             {
+                Logger.Info("Имя стана: {0} - Недоступен; Попытка переподключения - Connection result = {1}", Name, connectionResult);
+                client.Disconnect();
                 return false;
             }
         }
 
-        public void PrintName()
+        public string PrintName()
         {
             Console.WriteLine("Имя Стана: {0}", Name);
+            return Name;
         }
 
         public void ClientDisc()

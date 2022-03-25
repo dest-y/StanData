@@ -2,7 +2,7 @@
 internal class Stan
 {
 
-    private string Name;
+    public string Name;
     private string IpAddress;
     private int Counter;
     private bool Status;
