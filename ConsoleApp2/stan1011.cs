@@ -7,7 +7,7 @@ using Sharp7;
 
 namespace ConsoleApp2
 {
-    public class Stan789
+    internal class Stan1011
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -15,13 +15,16 @@ namespace ConsoleApp2
         private string IpAddress;
         public int Counter;
         public bool Status;
-        public bool WireBreak;
+        public int WireBreak;
         public bool DrawingChange;
         public bool CointerErase = false;
         int connectionResult;
         S7Client client = new();
 
-        public Stan789(string name, string ipAddress, int counter = 0, bool status = false)
+        int Speed;
+        float SpoolLifetime;
+
+        public Stan1011(string name, string ipAddress, int counter = 0, bool status = false)
         {
             Name = name;
             IpAddress = ipAddress;
@@ -30,7 +33,7 @@ namespace ConsoleApp2
 
             client.SetConnectionType(S7Client.CONNTYPE_BASIC);
 
-            connectionResult = client.ConnectTo(IpAddress, 0, 3); //10-11 стан 
+            connectionResult = client.ConnectTo(IpAddress, 0, 2); //10-11 стан 
             if (connectionResult == 0)
             {
                 Console.WriteLine("Connection OK");
@@ -38,7 +41,7 @@ namespace ConsoleApp2
             }
         }
 
-        public bool getData() 
+        public bool getData()
         {
             connectionResult = client.Connect();
             try
@@ -52,24 +55,25 @@ namespace ConsoleApp2
                     int DrawingChangeReadResult;
                     int WireBreakReadResult;
                     int ReadResult;
+                    int SpeedReadResult;
+                    int SpoolLifetimeReadResult;
 
-                    CointerReadResult = client.DBRead(66, 210, 4, dbuffer);
+                    SpeedReadResult = client.DBRead(11, 40, 2, buffer);
+                    Speed = buffer[1] * 256 + buffer[0];
+
+                    WireBreakReadResult = client.MBRead(202, 1, buffer);
+                    WireBreak = buffer[1] * 256 + buffer[0];
+
+                    SpoolLifetimeReadResult = client.DBRead(141, 30, 4, dbuffer);
+                    dbuffer = dbuffer.Reverse().ToArray();
+                    SpoolLifetime = BitConverter.ToSingle(dbuffer, 0);
+
+                    CointerReadResult = client.DBRead(11, 20, 4, dbuffer);
                     int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
                     Counter = tmp;
 
-                    DrawingChangeReadResult = client.DBRead(251, 8, 2, buffer);
-                    bool D01DB251DBX = S7.GetBitAt(buffer, 1, 1);
-                    DrawingChange = D01DB251DBX;
+                    Status = Speed > 100 ? false : true;   //Инверсия статуса false = стан в работе
 
-                    StatusReadResult = client.MBRead(4, 4, dbuffer);
-                    bool mb4_0 = S7.GetBitAt(dbuffer, 0, 0);
-                    bool mb7_0 = S7.GetBitAt(dbuffer, 3, 0);
-                    Status = mb4_0;
-                    CointerErase = mb7_0;
-
-                    WireBreakReadResult = client.MBRead(142, 2, buffer);
-                    bool mb142_0 = S7.GetBitAt(buffer, 0, 0);
-                    WireBreak = mb142_0;
 
                     //Console.WriteLine("Длина счетчика : " + Counter);
                     //Console.Write("Замена Волок: ");
@@ -81,21 +85,21 @@ namespace ConsoleApp2
                     //Console.Write("Обрыв проволоки: ");
                     //Console.WriteLine(WireBreak);
                     //Console.WriteLine("Конец данных");
-                    ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
+                    ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase);
+                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetime, Speed);
                     }
                     return true;
                 }
-                else 
+                else
                 {
                     Logger.Info("Имя стана: {0} - Недоступен; Попытка переподключения - Connection result = {1}", Name, connectionResult);
                     client.Disconnect();
                     return false;
                 }
             }
-            catch 
+            catch
             {
                 Logger.Info("Имя стана: {0} - Недоступен; Попытка переподключения - Connection result = {1}", Name, connectionResult);
                 client.Disconnect();
@@ -108,10 +112,8 @@ namespace ConsoleApp2
             Console.WriteLine("Имя Стана: {0}", Name);
             return Name;
         }
-
-        public void ClientDisc()
-        {
-            client.Disconnect();
-        }
     }
+
+
+
 }

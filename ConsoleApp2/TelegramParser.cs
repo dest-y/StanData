@@ -42,8 +42,8 @@ namespace ConsoleApp2
 
 
             if (Changed) 
-            { 
-                Logger.Info("Данные парсера перезаписаны");
+            {
+                //Logger.Info("Данные парсера перезаписаны");
                 status = cstan.Status;
                 WireBreak = cstan.WireBreak;
                 DrawingChange = cstan.DrawingChange;
@@ -80,7 +80,7 @@ namespace ConsoleApp2
             {
                 stateThree = "3";
             }
-            return CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) +"  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter;
+            return CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(!cstan.Status) +"  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter;
             //return CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000";
         }
 
