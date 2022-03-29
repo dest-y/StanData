@@ -7,19 +7,15 @@ using Sharp7;
 
 namespace ConsoleApp2
 {
-    public class Stan789
+    internal class Stan789 : Stan
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public string Name;
-        private string IpAddress;
-        public int Counter;
-        public bool Status;
         public bool WireBreak;
         public bool DrawingChange;
         public bool CointerErase = false;
         int connectionResult;
-        S7Client client = new();
+        S7Client client = new S7Client();
 
         public Stan789(string name, string ipAddress, int counter = 0, bool status = false)
         {
@@ -38,7 +34,7 @@ namespace ConsoleApp2
             }
         }
 
-        public bool getData() 
+        override public bool getData() 
         {
             connectionResult = client.Connect();
             try

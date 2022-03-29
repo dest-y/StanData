@@ -7,19 +7,15 @@ using Sharp7;
 
 namespace ConsoleApp2
 {
-    internal class Stan1011
+    internal class Stan1011 : Stan
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public string Name;
-        private string IpAddress;
-        public int Counter;
-        public bool Status;
         public int WireBreak;
         public bool DrawingChange;
         public bool CointerErase = false;
         int connectionResult;
-        S7Client client = new();
+        S7Client client = new S7Client();
 
         int Speed;
         float SpoolLifetime;
@@ -41,7 +37,7 @@ namespace ConsoleApp2
             }
         }
 
-        public bool getData()
+        override public bool getData()
         {
             connectionResult = client.Connect();
             try
@@ -51,8 +47,6 @@ namespace ConsoleApp2
                     var dbuffer = new byte[4];
                     var buffer = new byte[2];
                     int CointerReadResult;
-                    int StatusReadResult;
-                    int DrawingChangeReadResult;
                     int WireBreakReadResult;
                     int ReadResult;
                     int SpeedReadResult;
@@ -62,7 +56,7 @@ namespace ConsoleApp2
                     Speed = buffer[1] * 256 + buffer[0];
 
                     WireBreakReadResult = client.MBRead(202, 1, buffer);
-                    WireBreak = buffer[1] * 256 + buffer[0];
+                    WireBreak = buffer[0];
 
                     SpoolLifetimeReadResult = client.DBRead(141, 30, 4, dbuffer);
                     dbuffer = dbuffer.Reverse().ToArray();
