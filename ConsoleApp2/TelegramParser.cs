@@ -8,7 +8,7 @@ namespace ConsoleApp2
 {
     internal class TelegramParser
     {
-        private bool status;
+        private bool? status;
         private string name;
         private bool WireBreak;
         private bool DrawingChange;
@@ -16,42 +16,43 @@ namespace ConsoleApp2
         private bool Changed;
         private int Counter = 0;
         private Stan cstan;
+        internal string? TelegramData;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public TelegramParser(Stan stan)
         {
-            status = true;
+            status = null;
             name = stan.Name;
             Changed = true;
             DrawingChange = true;
             CointerErase = true;
             Changed = true;
             cstan = stan;
+            TelegramData = null;
         }
-        internal string CheckUpdate() 
+        internal bool CheckUpdate() 
         {
             cstan.getData();
             //Logger.Info("Имя стана: {0}; Изменено: {1}; Длина счетчика: {2}; Стан В работе: {3}!; Обрыв: {4}; Смена волок: {5};Сброс счётчика: {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
-            if ((cstan.DrawingChange && DrawingChange == !cstan.DrawingChange) || status != cstan.Status || (cstan.CointerErase && CointerErase == !cstan.CointerErase) || (cstan.WireBreak && WireBreak == !cstan.WireBreak))
+            if ((cstan.DrawingChange && DrawingChange == !cstan.DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && CointerErase == !cstan.CointerErase) || (cstan.WireBreak && WireBreak == !cstan.WireBreak))
             {
                 Changed = true;
-                Logger.Info("Данные изменены нужна телеграмма");
-                Logger.Info(CreateTelegram());
+                Logger.Info("Данные изменены, отправлена телеграмма");
+                TelegramData = CreateTelegram();
+                Logger.Info(TelegramData);
             }
-
-
             if (Changed) 
             {
-                Logger.Info("Данные парсера перезаписаны");
                 status = cstan.Status;
                 WireBreak = cstan.WireBreak;
                 DrawingChange = cstan.DrawingChange;
                 CointerErase = cstan.CointerErase;
                 Counter = cstan.Counter;
                 Changed = false;
+                return true;
             }
-            return "test";
+            return false;
         }
         public string CreateTelegram() 
         {
@@ -80,9 +81,9 @@ namespace ConsoleApp2
             {
                 stateThree = "1";
             }
-            Logger.Error(CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000");
-            return CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) +"  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter;
-            //return CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000";
+            //Logger.Error(CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000");
+            Logger.Error( CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) +"  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter);
+            return CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree;
         }
 
     }

@@ -3,6 +3,7 @@ using Sharp7;
 using System.Text;
 using Oracle.ManagedDataAccess.Client;
 
+SqliteClass ssll = new SqliteClass();
 
 
 Stan789 stan7 = new Stan789("7", "140.80.1.1");
@@ -19,7 +20,11 @@ TelegramParser telegram10 = new TelegramParser(stan10);
 TelegramParser telegram11 = new TelegramParser(stan11);
 
 
-//OracleClass.TryOracle("Select JOB_ID from JOBS");
+//OracleClass.ExecuteOraCommand("Select JOB_ID from JOBS");
+
+SqliteClass Sqll = new SqliteClass();
+
+//Sqll.insertTestString();
 
 Console.WriteLine("Начало данных");
 
@@ -39,14 +44,35 @@ bool getStan789Data()
         //stan10.getData();
         //stan11.getData();
 
-        telegram7.CheckUpdate();
-        telegram8.CheckUpdate();
-        telegram9.CheckUpdate();
-        telegram10.CheckUpdate();
-        telegram11.CheckUpdate();
+        //telegram7.CheckUpdate();
+        //telegram8.CheckUpdate();
+        //telegram9.CheckUpdate();
+        //telegram10.CheckUpdate();
+        //telegram11.CheckUpdate();
+        if (telegram7.CheckUpdate()) 
+        {
+            Sqll.insertTestString(string.Format("'{0}'", telegram7.TelegramData));
+        }
+        if (telegram8.CheckUpdate())
+        {
+            Sqll.insertTestString(string.Format("'{0}'", telegram8.TelegramData));
+        }
+        if (telegram9.CheckUpdate())
+        {
+            Sqll.insertTestString(string.Format("'{0}'", telegram9.TelegramData));
+        }
+        if (telegram10.CheckUpdate())
+        {
+            Sqll.insertTestString(string.Format("'{0}'", telegram10.TelegramData));
+        }
+        if (telegram11.CheckUpdate())
+        {
+            Sqll.insertTestString(string.Format("'{0}'", telegram11.TelegramData));
+        }
 
-        CurrentTime.getTime();
-            Thread.Sleep(2000);
+
+
+        Thread.Sleep(1000);
         return true;
     }
     catch

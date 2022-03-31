@@ -8,7 +8,7 @@ namespace ConsoleApp2
 
         
 
-        public static bool TryOracle(string CommandString) 
+        internal static bool ExecuteOraCommand(string CommandString) 
         {
             UserSecrets secret = new UserSecrets();
             secret.SecretsInit();

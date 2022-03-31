@@ -80,7 +80,7 @@ namespace ConsoleApp2
                     ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase);
+                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase);
                     }
                     return true;
                 }
