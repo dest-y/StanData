@@ -12,8 +12,6 @@ namespace ConsoleApp2
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public int WireBreak;
-        public bool DrawingChange;
-        public bool CointerErase = false;
         int connectionResult;
         S7Client client = new S7Client();
 
@@ -52,6 +50,8 @@ namespace ConsoleApp2
                     int SpeedReadResult;
                     int SpoolLifetimeReadResult;
 
+                    CointerErase = false;               //реализация нажатия обнуления счетчика.
+
                     SpeedReadResult = client.DBRead(11, 40, 2, buffer);
                     Speed = buffer[1] * 256 + buffer[0];
 
@@ -64,6 +64,12 @@ namespace ConsoleApp2
 
                     CointerReadResult = client.DBRead(11, 20, 4, dbuffer);
                     int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
+
+                    if (Counter > tmp)                   //реализация нажатия обнуления счетчика.
+                    {                                    //реализация нажатия обнуления счетчика.            
+                        CointerErase = true;             //реализация нажатия обнуления счетчика.     
+                    }                                    //реализация нажатия обнуления счетчика. 
+
                     Counter = tmp;
 
                     Status = Speed > 100 ? false : true;   //Инверсия статуса false = стан в работе
@@ -82,7 +88,7 @@ namespace ConsoleApp2
                     ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetime, Speed);
+                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetime, Speed);
                     }
                     return true;
                 }
@@ -105,6 +111,10 @@ namespace ConsoleApp2
         {
             Console.WriteLine("Имя Стана: {0}", Name);
             return Name;
+        }
+        internal void ClientDisc()
+        {
+            client.Disconnect();
         }
     }
 

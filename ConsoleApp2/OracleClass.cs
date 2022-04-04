@@ -8,7 +8,7 @@ namespace ConsoleApp2
 
         
 
-        internal static bool ExecuteOraCommand(string CommandString) 
+        public static bool ExecuteOraCommand(string CommandString) 
         {
             UserSecrets secret = new UserSecrets();
             secret.SecretsInit();
@@ -31,12 +31,13 @@ namespace ConsoleApp2
 
                         cmd.CommandText = CommandString;//"Select JOB_ID from JOBS"
 
-                         OracleDataReader reader = cmd.ExecuteReader();
+                        OracleDataReader reader = cmd.ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            Console.WriteLine("Имя пользователя:" + reader.GetString(0));
-                        }
+                        //while (reader.Read())
+                        //{
+                        //    Console.WriteLine("Имя пользователя:" + reader.GetString(0));
+                        //}
+                        con.Close();
                         reader.Dispose();
                     }
                     catch (Exception ex)

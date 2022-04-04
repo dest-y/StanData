@@ -35,14 +35,14 @@ namespace ConsoleApp2
         {
             cstan.getData();
             //Logger.Info("Имя стана: {0}; Изменено: {1}; Длина счетчика: {2}; Стан В работе: {3}!; Обрыв: {4}; Смена волок: {5};Сброс счётчика: {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
-            if ((cstan.DrawingChange && DrawingChange == !cstan.DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && CointerErase == !cstan.CointerErase) || (cstan.WireBreak && WireBreak == !cstan.WireBreak))
+            if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
             {
                 Changed = true;
                 Logger.Info("Данные изменены, отправлена телеграмма");
                 TelegramData = CreateTelegram();
                 Logger.Info(TelegramData);
             }
-            if (Changed) 
+            if (Changed)  // Убрать проверку?
             {
                 status = cstan.Status;
                 WireBreak = cstan.WireBreak;

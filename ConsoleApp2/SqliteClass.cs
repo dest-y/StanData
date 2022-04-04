@@ -10,6 +10,7 @@ namespace ConsoleApp2
     internal class SqliteClass
     {
         SqliteCommand m_sqlCmd = new SqliteCommand();
+        SqliteCommand m_sqlCmdOra = new SqliteCommand();
 
         internal SqliteClass() 
         {
@@ -48,6 +49,7 @@ namespace ConsoleApp2
                     m_sqlCmd.CommandText = CommandString;
 
                     m_sqlCmd.ExecuteNonQuery();
+
                 }
                 catch (Exception ex)
                 {
@@ -59,13 +61,78 @@ namespace ConsoleApp2
 
         internal bool insertTestString(string TelegramDataString)
         {
-            { 
+            try
+            {
                 string sqlQuery = "INSERT INTO Catalog (telegram, send_state) ";
                 sqlQuery += string.Format("VALUES ({0},{1})", TelegramDataString, 0);
                 ExecutCommand(sqlQuery);
                 return true;
             }
-            return false;
+            catch 
+            {
+                return false;
+            }
+            
+        }
+
+        internal void getNotPostedTelegrams()
+        {
+            using (var connection = new SqliteConnection("Data Source=Telegrams.db"))
+            {
+                try
+                {
+                    connection.Open();
+
+                    m_sqlCmdOra.Connection = connection;
+
+                    m_sqlCmdOra.CommandText = "SELECT Catalog.*, count(*) over() conter FROM [Catalog] WHERE [send_state] =0";
+
+                    m_sqlCmdOra.ExecuteNonQuery();
+
+                    SqliteDataReader sqlReader = m_sqlCmdOra.ExecuteReader();
+
+                    string telegram;
+                    string id_update_str = "";
+                    Int64 id_telegramm;
+                    Int64 count = 0;
+                    Int64 temp;
+
+                    while (sqlReader.Read()) // считываем и вносим в лист все параметры
+                    {
+                        telegram = sqlReader["telegram"].ToString(); // читаем строки с изображениями, которые хранятся в байтовом формате
+
+                        //функция отправка телеграммы в БД telegram
+                        OracleClass.ExecuteOraCommand("insert into test_sequence values(t_sequence.nextval,'" + telegram + "')");
+
+                        id_telegramm = (Int64)sqlReader["id"];
+
+                        temp = (Int64)sqlReader["conter"];
+                        count++;
+                        id_update_str += id_telegramm;
+
+                        if (count < (Int64)sqlReader["conter"])
+                            id_update_str += ",";
+
+
+                    }
+                    sqlReader.Close();
+
+                    string sqlQuery;
+                    sqlQuery = "update Catalog set send_state=1 where id in";
+                    sqlQuery += string.Format("({0})", id_update_str);
+                    m_sqlCmdOra.CommandText = sqlQuery;
+                    m_sqlCmdOra.ExecuteNonQuery();
+                    sqlReader.Close();
+
+                    connection.Close();
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+
         }
 
     }
