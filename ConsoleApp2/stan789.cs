@@ -71,19 +71,8 @@ namespace ConsoleApp2
                     SpoolLifetimeReadResult = client.DBRead(251, 64, 2, buffer);
                     SpoolLifetimeCurrent = buffer[0] * 256 + buffer[1];
 
-
                     DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
 
-                    //Console.WriteLine("Длина счетчика : " + Counter);
-                    //Console.Write("Замена Волок: ");
-                    //Console.WriteLine(DrawingChange);
-                    //Console.Write("Стан в работе(если false значит ON): ");
-                    //Console.WriteLine(Status);
-                    //Console.Write("Сброс счетчика: ");
-                    //Console.WriteLine(CointerErase);
-                    //Console.Write("Обрыв проволоки: ");
-                    //Console.WriteLine(WireBreak);
-                    //Console.WriteLine("Конец данных");
                     ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
@@ -101,7 +90,7 @@ namespace ConsoleApp2
             }
             catch 
             {
-                Logger.Info("Имя стана: {0} - !Недоступен!; Попытка переподключения - Connection result = {1}", Name, connectionResult);
+                Logger.Info("Имя стана: {0} - Ошибка подключения; Попытка переподключения - Connection result = {1}", Name, connectionResult);
                 client.Disconnect();
                 return false;
             }
@@ -113,7 +102,7 @@ namespace ConsoleApp2
             return Name;
         }
 
-        public void ClientDisc()
+        internal void ClientDisc()
         {
             client.Disconnect();
         }

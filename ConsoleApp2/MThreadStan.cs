@@ -10,10 +10,11 @@ namespace ConsoleApp2
     {
         TelegramParser Telegram;
         SqliteClass SqliteConnection;
-
-        internal MThreadStan(TelegramParser telegram)
+        int Ttimer;
+        internal MThreadStan(TelegramParser telegram, int timer)
         {
             Telegram = telegram;
+            Ttimer = timer;
             SqliteConnection = new SqliteClass();
 
             Thread thread = new Thread(new ThreadStart(StartThread));
@@ -28,7 +29,7 @@ namespace ConsoleApp2
                 {
                     SqliteConnection.insertTestString(Telegram);
                 }
-                Thread.Sleep(700);
+                Thread.Sleep(Ttimer);
             }
         }
 

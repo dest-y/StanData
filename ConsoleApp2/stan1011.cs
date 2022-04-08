@@ -94,7 +94,7 @@ namespace ConsoleApp2
             }
             catch
             {
-                Logger.Info("Имя стана: {0} - Недоступен; Попытка переподключения - Connection result = {1}", Name, connectionResult);
+                Logger.Info("Имя стана: {0} - Ошибка подключения; Попытка переподключения - Connection result = {1}", Name, connectionResult);
                 client.Disconnect();
                 return false;
             }
