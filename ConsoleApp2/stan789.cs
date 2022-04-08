@@ -12,6 +12,9 @@ namespace ConsoleApp2
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         int connectionResult;
+        int SpoolLifetimeCurrent;
+        int SpoolLifetimeOld = 100;
+        int SpoolLifetimeReadResult;
 
         S7Client client = new S7Client();
 
@@ -65,6 +68,12 @@ namespace ConsoleApp2
                     bool mb142_0 = S7.GetBitAt(buffer, 0, 0);
                     WireBreak = mb142_0;
 
+                    SpoolLifetimeReadResult = client.DBRead(251, 64, 2, buffer);
+                    SpoolLifetimeCurrent = buffer[0] * 256 + buffer[1];
+
+
+                    DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
+
                     //Console.WriteLine("Длина счетчика : " + Counter);
                     //Console.Write("Замена Волок: ");
                     //Console.WriteLine(DrawingChange);
@@ -78,7 +87,8 @@ namespace ConsoleApp2
                     ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase);
+                        SpoolLifetimeOld = SpoolLifetimeCurrent;
+                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
                     }
                     return true;
                 }

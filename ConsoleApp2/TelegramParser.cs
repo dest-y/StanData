@@ -8,13 +8,13 @@ namespace ConsoleApp2
 {
     internal class TelegramParser
     {
-        private bool? status;
-        private string name;
-        private bool WireBreak;
-        private bool DrawingChange;
-        private bool CointerErase;
-        private bool Changed;
-        private int Counter = 0;
+        internal bool? status;
+        internal string name;
+        internal bool WireBreak;
+        internal bool DrawingChange;
+        internal bool CointerErase;
+        internal bool Changed;
+        internal int Counter = 0;
         private Stan cstan;
         internal string? TelegramData;
 
@@ -24,9 +24,6 @@ namespace ConsoleApp2
         {
             status = null;
             name = stan.Name;
-            Changed = true;
-            DrawingChange = true;
-            CointerErase = true;
             Changed = true;
             cstan = stan;
             TelegramData = null;
@@ -42,13 +39,13 @@ namespace ConsoleApp2
                 TelegramData = CreateTelegram();
                 Logger.Info(TelegramData);
             }
+            status = cstan.Status;
+            WireBreak = cstan.WireBreak;
+            DrawingChange = cstan.DrawingChange;
+            CointerErase = cstan.CointerErase;
+            Counter = cstan.Counter;
             if (Changed)  // Убрать проверку?
             {
-                status = cstan.Status;
-                WireBreak = cstan.WireBreak;
-                DrawingChange = cstan.DrawingChange;
-                CointerErase = cstan.CointerErase;
-                Counter = cstan.Counter;
                 Changed = false;
                 return true;
             }

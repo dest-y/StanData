@@ -11,12 +11,12 @@ namespace ConsoleApp2
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public int WireBreak;
         int connectionResult;
         S7Client client = new S7Client();
 
         int Speed;
-        float SpoolLifetime;
+        float SpoolLifetimeCurrent;
+        float SpoolLifetimeOld = 100;
 
         public Stan1011(string name, string ipAddress, int counter = 0, bool status = false)
         {
@@ -37,6 +37,7 @@ namespace ConsoleApp2
 
         override public bool getData()
         {
+            DrawingChange = false;
             connectionResult = client.Connect();
             try
             {
@@ -56,11 +57,11 @@ namespace ConsoleApp2
                     Speed = buffer[1] * 256 + buffer[0];
 
                     WireBreakReadResult = client.MBRead(202, 1, buffer);
-                    WireBreak = buffer[0];
+                    WireBreak = buffer[0] > 0 ? true: false;
 
                     SpoolLifetimeReadResult = client.DBRead(141, 30, 4, dbuffer);
                     dbuffer = dbuffer.Reverse().ToArray();
-                    SpoolLifetime = BitConverter.ToSingle(dbuffer, 0);
+                    SpoolLifetimeCurrent = BitConverter.ToSingle(dbuffer, 0);
 
                     CointerReadResult = client.DBRead(11, 20, 4, dbuffer);
                     int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
@@ -70,25 +71,17 @@ namespace ConsoleApp2
                         CointerErase = true;             //реализация нажатия обнуления счетчика.     
                     }                                    //реализация нажатия обнуления счетчика. 
 
+                    DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
+
                     Counter = tmp;
 
                     Status = Speed > 100 ? false : true;   //Инверсия статуса false = стан в работе
 
-
-                    //Console.WriteLine("Длина счетчика : " + Counter);
-                    //Console.Write("Замена Волок: ");
-                    //Console.WriteLine(DrawingChange);
-                    //Console.Write("Стан в работе(если false значит ON): ");
-                    //Console.WriteLine(Status);
-                    //Console.Write("Сброс счетчика: ");
-                    //Console.WriteLine(CointerErase);
-                    //Console.Write("Обрыв проволоки: ");
-                    //Console.WriteLine(WireBreak);
-                    //Console.WriteLine("Конец данных");
                     ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
                     if (ReadResult == 0)
                     {
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetime, Speed);
+                        SpoolLifetimeOld = SpoolLifetimeCurrent;
+                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetimeCurrent, Speed);
                     }
                     return true;
                 }

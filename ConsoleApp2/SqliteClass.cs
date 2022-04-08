@@ -22,7 +22,7 @@ namespace ConsoleApp2
 
                     m_sqlCmd.Connection = connection;
 
-                    m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  telegram TEXT, send_state INTEGER)";
+                    m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  WHEN_DATE DATE, G_UCHASTOK TEXT, N_STN INTEGER, START_STOP INTEGER, ERASE INTEGER, BREAK INTEGER, REPLACE INTEGER, COUNTER INTEGER, SEND_STATE INTEGER)";
 
                     m_sqlCmd.ExecuteNonQuery();
 
@@ -54,17 +54,18 @@ namespace ConsoleApp2
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
+                    connection.Close();
                 }
             }
             return true;
         }
 
-        internal bool insertTestString(string TelegramDataString)
+        internal bool insertTestString(TelegramParser Tpars)
         {
             try
             {
-                string sqlQuery = "INSERT INTO Catalog (telegram, send_state) ";
-                sqlQuery += string.Format("VALUES ({0},{1})", TelegramDataString, 0);
+                string sqlQuery = "INSERT INTO Catalog (WHEN_DATE, G_UCHASTOK, N_STN, START_STOP, ERASE, BREAK, REPLACE, COUNTER, SEND_STATE) ";
+                sqlQuery += string.Format("VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})", CurrentTime.getTime(), "'D'", Convert.ToInt32(Tpars.name), Convert.ToInt32(!Tpars.status), Convert.ToInt32(Tpars.CointerErase), Convert.ToInt32(Tpars.WireBreak), Convert.ToInt32(Tpars.DrawingChange), Convert.ToInt32(Tpars.Counter), 0);
                 ExecutCommand(sqlQuery);
                 return true;
             }
@@ -91,7 +92,16 @@ namespace ConsoleApp2
 
                     SqliteDataReader sqlReader = m_sqlCmdOra.ExecuteReader();
 
-                    string telegram;
+                    string WHEN_DATE;
+                    string G_UCHASTOK;
+                    string N_STN;
+                    string START_STOP;
+                    string ERASE;
+                    string BREAK;
+                    string REPLACE;
+                    string COUNTER;
+
+
                     string id_update_str = "";
                     Int64 id_telegramm;
                     Int64 count = 0;
@@ -99,10 +109,19 @@ namespace ConsoleApp2
 
                     while (sqlReader.Read()) // считываем и вносим в лист все параметры
                     {
-                        telegram = sqlReader["telegram"].ToString(); // читаем строки с изображениями, которые хранятся в байтовом формате
+                        WHEN_DATE = sqlReader["WHEN_DATE"].ToString(); // читаем строки с изображениями, которые хранятся в байтовом формате
+                        G_UCHASTOK = sqlReader["G_UCHASTOK"].ToString();
+                        N_STN = sqlReader["N_STN"].ToString();
+                        START_STOP = sqlReader["START_STOP"].ToString();
+                        ERASE = sqlReader["ERASE"].ToString();
+                        BREAK = sqlReader["BREAK"].ToString();
+                        REPLACE = sqlReader["REPLACE"].ToString();
+                        COUNTER = sqlReader["COUNTER"].ToString();
 
                         //функция отправка телеграммы в БД telegram
-                        OracleClass.ExecuteOraCommand("insert into test_sequence values(t_sequence.nextval,'" + telegram + "')");
+                        string j = "insert into GUILD_MILL_FIX (WHEN_DATE, G_UCHASTOK, N_STAN, START_STOP, ERASE, BREAK, REPLAC, COUNTER, INCOMIN_DATE, TYPE_TELEG)";
+                        string n = string.Format(" VALUES(TO_DATE('{7}', 'dd.mm.yyyy hh24:mi:ss'),'{0}',{1},{2},{3},{4},{5},{6}, SYSDATE, 'T')", G_UCHASTOK, N_STN, START_STOP, ERASE, BREAK, REPLACE, COUNTER, WHEN_DATE);
+                        OracleClass.ExecuteOraCommand(j+n);
 
                         id_telegramm = (Int64)sqlReader["id"];
 

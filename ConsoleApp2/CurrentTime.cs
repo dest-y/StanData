@@ -10,7 +10,7 @@ namespace ConsoleApp2
     {
         public static string getTime() 
         {
-            return DateTime.Now.ToString();
+            return "'" + DateTime.Now.ToString() + "'";
         }
     }
 }
