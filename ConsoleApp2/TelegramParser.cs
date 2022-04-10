@@ -30,24 +30,27 @@ namespace ConsoleApp2
         }
         internal bool CheckUpdate() 
         {
-            cstan.getData();
-            //Logger.Info("Имя стана: {0}; Изменено: {1}; Длина счетчика: {2}; Стан В работе: {3}!; Обрыв: {4}; Смена волок: {5};Сброс счётчика: {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
-            if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
+            if (cstan.getData()) 
             {
-                Changed = true;
-                Logger.Info("Данные изменены, отправлена телеграмма");
-                TelegramData = CreateTelegram();
-                Logger.Info(TelegramData);
-            }
-            status = cstan.Status;
-            WireBreak = cstan.WireBreak;
-            DrawingChange = cstan.DrawingChange;
-            CointerErase = cstan.CointerErase;
-            Counter = cstan.Counter;
-            if (Changed)  // Убрать проверку?
-            {
-                Changed = false;
-                return true;
+                Logger.Info(2);
+                Logger.Info("Имя: {0}; Изм: {1}; счетчик: {2}; В работе: {3}!; Обрыв: {4}; Смена волок: {5};Сброс счётч: {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
+                if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
+                {
+                    Changed = true;
+                    Logger.Info("Данные изменены, отправлена телеграмма");
+                    TelegramData = CreateTelegram();
+                    Logger.Info(TelegramData);
+                }
+                status = cstan.Status;
+                WireBreak = cstan.WireBreak;
+                DrawingChange = cstan.DrawingChange;
+                CointerErase = cstan.CointerErase;
+                Counter = cstan.Counter;
+                if (Changed)  // Убрать проверку?
+                {
+                    Changed = false;
+                    return true;
+                }
             }
             return false;
         }

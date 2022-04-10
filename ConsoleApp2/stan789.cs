@@ -14,7 +14,6 @@ namespace ConsoleApp2
         int connectionResult;
         int SpoolLifetimeCurrent;
         int SpoolLifetimeOld = 100;
-        int SpoolLifetimeReadResult;
 
         S7Client client = new S7Client();
 
@@ -48,6 +47,7 @@ namespace ConsoleApp2
                     int StatusReadResult;
                     int DrawingChangeReadResult;
                     int WireBreakReadResult;
+                    int SpoolLifetimeReadResult;
                     int ReadResult;
 
                     CointerReadResult = client.DBRead(66, 210, 4, dbuffer);
@@ -73,11 +73,11 @@ namespace ConsoleApp2
 
                     DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
 
-                    ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult;
+                    ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult + SpoolLifetimeReadResult;
                     if (ReadResult == 0)
                     {
                         SpoolLifetimeOld = SpoolLifetimeCurrent;
-                        Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
+                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
                     }
                     return true;
                 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 SqliteClass SqllOra = new SqliteClass();
 
-async Task OraAsync()
+async Task OraUpdateAsync()
 {
     Console.WriteLine("Начало метода OraAsync");
     await Task.Run(() => SqllOra.getNotPostedTelegrams());
@@ -25,11 +25,11 @@ TelegramParser StanParser79 = new TelegramParser(stan9);
 TelegramParser StanParser710 = new TelegramParser(stan10);
 TelegramParser StanParser711 = new TelegramParser(stan11);
 
-MThreadStan MThreadStan7 = new MThreadStan(StanParser7, 500);
-MThreadStan MThreadStan8 = new MThreadStan(StanParser78, 500);
-MThreadStan MThreadStan9 = new MThreadStan(StanParser79, 500);
-MThreadStan MThreadStan10 = new MThreadStan(StanParser710, 500);
-MThreadStan MThreadStan11 = new MThreadStan(StanParser711, 500);
+MThreadStan MThreadStan7 = new MThreadStan(StanParser7, 2000);
+MThreadStan MThreadStan8 = new MThreadStan(StanParser78, 2000);
+MThreadStan MThreadStan9 = new MThreadStan(StanParser79, 2000);
+MThreadStan MThreadStan10 = new MThreadStan(StanParser710, 2000);
+MThreadStan MThreadStan11 = new MThreadStan(StanParser711, 2000);
 
 Console.WriteLine("Начало данных");
 
@@ -47,10 +47,10 @@ bool PullDataToOra()
         if (count == 10)
         {
             count = 0;
-            OraAsync();
+            OraUpdateAsync();
         }
 
-        Thread.Sleep(2000);
+        Thread.Sleep(3000);
         return true;
     }
     catch

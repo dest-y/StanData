@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
 	<UserSecretsId>{53FB0C6E-3DDB-43AC-BBBA-84FDCC43D787}</UserSecretsId>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

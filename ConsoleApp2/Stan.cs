@@ -1,7 +1,6 @@
 ﻿using Sharp7;
-internal class Stan
+internal abstract class Stan
 {
-
     internal string Name;
     internal string IpAddress;
     internal int Counter;
@@ -10,9 +9,5 @@ internal class Stan
     internal bool DrawingChange;
     internal bool CointerErase;
 
-    virtual public bool getData() 
-    {
-        return true;
-    }
-
+    public abstract bool getData();
 }
