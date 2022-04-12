@@ -17,9 +17,9 @@ namespace ConsoleApp2
         internal int Counter = 0;
         private Stan cstan;
         internal string? TelegramData;
-
+        
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
+        public event Action OraUpdate;
         public TelegramParser(Stan stan)
         {
             status = null;
@@ -32,11 +32,11 @@ namespace ConsoleApp2
         {
             if (cstan.getData()) 
             {
-                Logger.Info(2);
-                Logger.Info("Имя: {0}; Изм: {1}; счетчик: {2}; В работе: {3}!; Обрыв: {4}; Смена волок: {5};Сброс счётч: {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
+                Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
                 if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
                 {
                     Changed = true;
+                    OraUpdate?.Invoke();
                     Logger.Info("Данные изменены, отправлена телеграмма");
                     TelegramData = CreateTelegram();
                     Logger.Info(TelegramData);

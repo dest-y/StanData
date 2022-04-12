@@ -11,6 +11,7 @@ namespace ConsoleApp2
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+
         int connectionResult;
         S7Client client = new S7Client();
 
@@ -75,7 +76,7 @@ namespace ConsoleApp2
 
                     Counter = tmp;
 
-                    Status = Speed > 100 ? false : true;   //Инверсия статуса false = стан в работе
+                    Status = Speed > 5 ? false : true;   //Инверсия статуса false = стан в работе
 
                     ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
                     
