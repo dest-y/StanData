@@ -7,11 +7,11 @@ using Microsoft.Data.Sqlite;
 
 namespace ConsoleApp2
 {
-    internal class SqliteClass
+    internal class SqliteClass : IDisposable
     {
         SqliteCommand m_sqlCmd = new SqliteCommand();
         SqliteCommand m_sqlCmdOra = new SqliteCommand();
-
+        OracleClass Oratest = new OracleClass();
         internal SqliteClass() 
         {
             using (var connection = new SqliteConnection("Data Source=Telegrams.db"))
@@ -76,7 +76,10 @@ namespace ConsoleApp2
             
         }
 
-        
+        public void Dispose() 
+        {
+            GC.SuppressFinalize(this);  
+        }
 
         internal void getNotPostedTelegrams()
         {
@@ -126,7 +129,10 @@ namespace ConsoleApp2
                             string n = string.Format(" VALUES(TO_DATE('{7}', 'dd.mm.yyyy hh24:mi:ss'),'{0}',{1},{2},{3},{4},{5},{6}, SYSDATE, 'T')", G_UCHASTOK, N_STN, START_STOP, ERASE, BREAK, REPLACE, COUNTER, WHEN_DATE);
                         try
                         {
-                            OracleClass.ExecuteOraCommand(j + n);
+
+                            Oratest.ExecuteOraCommand2(j + n);
+
+                            //OracleClass.ExecuteOraCommand(j + n);
 
                             id_telegramm = (Int64)sqlReader["id"];
 

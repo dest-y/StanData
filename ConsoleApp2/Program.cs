@@ -5,15 +5,19 @@ using System.Threading.Tasks;
 
 SqliteClass SqllOra = new SqliteClass();
 
+bool OraNowUpdateStatus = false;
+
 async Task OraUpdateAsync()
 {
+    OraNowUpdateStatus = true;
+    Thread.Sleep(1000);
     Console.WriteLine("Начало метода OraAsync");
     await Task.Run(() => SqllOra.getNotPostedTelegrams());
     Console.WriteLine("Конец метода OraAsync");
+    OraNowUpdateStatus = false;
 }
 int count = 0;
 
-bool OraNowUpdateStatus = false;
 
 Stan789 stan7 = new Stan789("7", "140.80.1.1");
 Stan789 stan8 = new Stan789("8", "140.80.1.2");
@@ -33,19 +37,12 @@ MThreadStan MThreadStan9 = new MThreadStan(StanParser79, 1000);
 MThreadStan MThreadStan10 = new MThreadStan(StanParser710, 1000);
 MThreadStan MThreadStan11 = new MThreadStan(StanParser711, 1000);
 
-StanParser710.OraUpdate += StanParser710_OraUpdate;
-StanParser711.OraUpdate += StanParser711_OraUpdate;
+StanParser710.OraUpdate += StanParser_OraUpdate;
+StanParser711.OraUpdate += StanParser_OraUpdate;
 
-void StanParser711_OraUpdate()
-{
-    if (!OraNowUpdateStatus)
-    {
-        OraUpdateAsync();
-    }
 
-}
 
-void StanParser710_OraUpdate()
+void StanParser_OraUpdate()
 {
     if (!OraNowUpdateStatus)
     {
@@ -53,11 +50,15 @@ void StanParser710_OraUpdate()
     }
 }
 
-Console.WriteLine("Начало данных");
-
-while (PullDataToOra())
+Loop:
+using (SqllOra)
 {
+    Console.WriteLine("реконект к БД!");
+    while (PullDataToOra())
+    {
 
+    }
+    goto Loop;
 }
 
 bool PullDataToOra()
@@ -67,14 +68,14 @@ bool PullDataToOra()
     {
         count++;
 
-        if (count == 155)
+        if (count == 5)
         {
             count = 0;
             OraUpdateAsync();
             OraNowUpdateStatus = true;
         }
 
-         Thread.Sleep(3000);
+        Thread.Sleep(3000);
         OraNowUpdateStatus = false;
         return true;
     }
@@ -84,5 +85,6 @@ bool PullDataToOra()
         return false;
     }
 }
+
 Console.WriteLine("Для завершения программы нажмите <Enter>");
 Console.ReadLine();

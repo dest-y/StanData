@@ -5,7 +5,40 @@ namespace ConsoleApp2
     public class OracleClass
     {
 
+        OracleConnection con;
 
+        public OracleClass() 
+        {
+            UserSecrets secret = new UserSecrets();
+            secret.SecretsInit();
+            string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);
+            con = new OracleConnection(conString);
+        }
+
+        public bool ExecuteOraCommand2(string CommandString) 
+        {
+            try
+            {
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    con.Open();
+                    cmd.BindByName = true;
+
+                    cmd.CommandText = CommandString;
+
+                    OracleDataReader reader = cmd.ExecuteReader();
+
+                    con.Close();
+                    reader.Dispose();
+                    return true;
+                }
+            }
+            catch 
+            {
+                con.Dispose();
+                return false;
+            }
+        }
 
         public static bool ExecuteOraCommand(string CommandString)
         {
