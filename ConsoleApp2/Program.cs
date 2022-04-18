@@ -3,16 +3,17 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 
-SqliteClass SqllOra = new SqliteClass();
+SqliteDataTransfer SqllOra = new SqliteDataTransfer();
 
 bool OraNowUpdateStatus = false;
+OracleConnection Oratest = new OracleConnection();
 
 async Task OraUpdateAsync()
 {
     OraNowUpdateStatus = true;
     Thread.Sleep(1000);
     Console.WriteLine("Начало метода OraAsync");
-    await Task.Run(() => SqllOra.getNotPostedTelegrams());
+    await Task.Run(() => SqllOra.TransferNotPostedTelegrams(Oratest));
     Console.WriteLine("Конец метода OraAsync");
     OraNowUpdateStatus = false;
 }
