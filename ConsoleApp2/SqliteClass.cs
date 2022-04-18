@@ -5,14 +5,14 @@ namespace ConsoleApp2
 {
     internal class SqliteClass : IDisposable, IConnectionHandler
     {
-        SqliteCommand m_sqlCmd = new SqliteCommand();
+        internal SqliteCommand m_sqlCmd;
         internal SqliteConnection connection;
-        SqliteTransaction transaction;
+        internal SqliteTransaction transaction;
         public SqliteClass()
         {
             connection = new SqliteConnection("Data Source=Telegrams.db");
             connection.Open();
-
+            m_sqlCmd = new SqliteCommand();
             try
             {
                 m_sqlCmd.Connection = connection;
@@ -92,16 +92,19 @@ namespace ConsoleApp2
         }
         public void StartTransaction()
         {
-            transaction = connection.BeginTransaction();
-        }
+            transaction = this.connection.BeginTransaction();
+            m_sqlCmd.Transaction = transaction;
+        }    
 
         public void CommitTransaction()
         {
+            m_sqlCmd.Transaction = transaction;
             transaction.Commit();
         }
 
         public void RollbackTransaction()
         {
+            m_sqlCmd.Transaction = transaction;
             transaction.Rollback();
         }
     }

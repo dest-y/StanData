@@ -47,6 +47,7 @@ namespace ConsoleApp2
         public void Close()
         {
             con.Close();
+            Console.WriteLine(con.State); 
         }
         public void Create()
         {
@@ -77,5 +78,6 @@ namespace ConsoleApp2
             transaction.Rollback();
             Console.WriteLine("ORA ROLLBACK");
         }
+        
     }
 }

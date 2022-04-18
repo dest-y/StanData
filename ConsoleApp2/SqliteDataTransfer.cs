@@ -10,8 +10,6 @@ namespace ConsoleApp2
 
     internal class SqliteDataTransfer : SqliteClass
     {
-        SqliteCommand m_sqlCmdOra = new SqliteCommand();
-
         public SqliteDataTransfer() 
         {
             connection = new SqliteConnection("Data Source=Telegrams.db");
@@ -22,11 +20,11 @@ namespace ConsoleApp2
         {
             try
             {
-                m_sqlCmdOra.Connection = connection;
+                m_sqlCmd.Connection = connection;
 
-                m_sqlCmdOra.CommandText = "SELECT Catalog.*, count(*) over() conter FROM [Catalog] WHERE [send_state] = 0";
-                m_sqlCmdOra.ExecuteNonQuery();
-                SqliteDataReader sqlReader = m_sqlCmdOra.ExecuteReader();
+                m_sqlCmd.CommandText = "SELECT Catalog.*, count(*) over() conter FROM [Catalog] WHERE [send_state] = 0";
+                m_sqlCmd.ExecuteNonQuery();
+                SqliteDataReader sqlReader = m_sqlCmd.ExecuteReader();
 
                 string WHEN_DATE;
                 string G_UCHASTOK;
@@ -43,7 +41,7 @@ namespace ConsoleApp2
                 Int64 temp;
 
                 OraConnection.StartTransaction();
-                StartTransaction();                    //Local DB
+                
                 while (sqlReader.Read()) // считываем и вносим в лист все параметры
                 {
 
@@ -85,26 +83,26 @@ namespace ConsoleApp2
                     catch
                     {
                         Console.WriteLine("Ошибка записи в БД ORACLE");
-                        OraConnection.RollbackTransaction();
-                        RollbackTransaction();                    //Local DB
+
                     }
                 }
                 sqlReader.Close();
 
-                OraConnection.CommitTransaction();
-                CommitTransaction();                    //Local DB
 
+                StartTransaction();                    //Local DB
                 string sqlQuery;
                 sqlQuery = "update Catalog set send_state=1 where id in";
                 sqlQuery += string.Format("({0})", id_update_str);
-                m_sqlCmdOra.CommandText = sqlQuery;
-                m_sqlCmdOra.ExecuteNonQuery();
-                sqlReader.Close();
+                m_sqlCmd.CommandText = sqlQuery;
+                m_sqlCmd.ExecuteNonQuery();
 
-
+                OraConnection.CommitTransaction();
+                CommitTransaction();                    //Local DB
             }
             catch (Exception ex)
             {
+                OraConnection.RollbackTransaction();
+                RollbackTransaction();                    //Local DB
                 Console.WriteLine(ex);
             }
         }

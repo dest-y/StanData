@@ -1,7 +1,4 @@
 ﻿using ConsoleApp2;
-using System;
-using System.Collections;
-using System.Threading.Tasks;
 
 SqliteDataTransfer SqllOra = new SqliteDataTransfer();
 
@@ -64,7 +61,7 @@ using (SqllOra)
 
 bool PullDataToOra()
 {
-    
+
     try
     {
         count++;
