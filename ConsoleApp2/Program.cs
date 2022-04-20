@@ -1,16 +1,16 @@
 ﻿using ConsoleApp2;
 
-SqliteDataTransfer SqllOra = new SqliteDataTransfer();
 
 bool OraNowUpdateStatus = false;
 OracleConnection Oratest = new OracleConnection();
+SqliteDataTransfer SqllOra = new SqliteDataTransfer(Oratest);
 
 async Task OraUpdateAsync()
 {
     OraNowUpdateStatus = true;
     Thread.Sleep(1000);
     Console.WriteLine("Начало метода OraAsync");
-    await Task.Run(() => SqllOra.TransferNotPostedTelegrams(Oratest));
+    await Task.Run(() => SqllOra.TransferNotPostedTelegrams());
     Console.WriteLine("Конец метода OraAsync");
     OraNowUpdateStatus = false;
 }
@@ -35,54 +35,52 @@ MThreadStan MThreadStan9 = new MThreadStan(StanParser79, 1000);
 MThreadStan MThreadStan10 = new MThreadStan(StanParser710, 1000);
 MThreadStan MThreadStan11 = new MThreadStan(StanParser711, 1000);
 
-StanParser710.OraUpdate += StanParser_OraUpdate;
-StanParser711.OraUpdate += StanParser_OraUpdate;
+//StanParser710.OraUpdate += StanParser_OraUpdate;
+//StanParser711.OraUpdate += StanParser_OraUpdate;
 
-
+MThreadOrace ThreadOrace = new MThreadOrace(SqllOra);
 
 void StanParser_OraUpdate()
 {
-    if (!OraNowUpdateStatus)
-    {
-        OraUpdateAsync();
-    }
+    ThreadOrace.OracleEvent.Set();
 }
 
 Loop:
 using (SqllOra)
 {
     Console.WriteLine("реконект к БД!");
-    while (PullDataToOra())
+    while (true)
     {
-
+        Thread.Sleep(5000);
     }
+    Thread.Sleep(5000);
     goto Loop;
 }
 
-bool PullDataToOra()
-{
+//bool PullDataToOra()
+//{
 
-    try
-    {
-        count++;
+//    try
+//    {
+//        count++;
 
-        if (count == 5)
-        {
-            count = 0;
-            OraUpdateAsync();
-            OraNowUpdateStatus = true;
-        }
+//        if (count == 5)
+//        {
+//            count = 0;
+//            OraUpdateAsync();
+//            OraNowUpdateStatus = true;
+//        }
 
-        Thread.Sleep(3000);
-        OraNowUpdateStatus = false;
-        return true;
-    }
-    catch
-    {
-        OraNowUpdateStatus = false;
-        return false;
-    }
-}
+//        Thread.Sleep(3000);
+//        OraNowUpdateStatus = false;
+//        return true;
+//    }
+//    catch
+//    {
+//        OraNowUpdateStatus = false;
+//        return false;
+//    }
+//}
 
 Console.WriteLine("Для завершения программы нажмите <Enter>");
 Console.ReadLine();

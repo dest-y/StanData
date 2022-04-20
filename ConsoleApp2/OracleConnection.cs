@@ -11,7 +11,7 @@ namespace ConsoleApp2
     internal class OracleConnection : IConnectionHandler
     {
         public Oracle.ManagedDataAccess.Client.OracleConnection con;
-        OracleTransaction transaction;
+        internal OracleTransaction transaction;
 
         public OracleConnection()
         {
@@ -28,6 +28,7 @@ namespace ConsoleApp2
             {
                 using (OracleCommand cmd = con.CreateCommand())
                 {
+
                     cmd.BindByName = true;
                     cmd.CommandText = CommandString;
 
@@ -38,8 +39,9 @@ namespace ConsoleApp2
                     return true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 Console.WriteLine("OraFail");
                 return false;
             }
@@ -74,9 +76,9 @@ namespace ConsoleApp2
         }
         public void RollbackTransaction()
         {
+            Console.WriteLine("ORA ROLLBACK");
             if (transaction != null)
             transaction.Rollback();
-            Console.WriteLine("ORA ROLLBACK");
         }
         
     }

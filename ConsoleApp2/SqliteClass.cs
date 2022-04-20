@@ -5,25 +5,26 @@ namespace ConsoleApp2
 {
     internal class SqliteClass : IDisposable, IConnectionHandler
     {
-        internal SqliteCommand m_sqlCmd;
         internal SqliteConnection connection;
-        internal SqliteTransaction transaction;
+        SqliteTransaction transaction;
         public SqliteClass()
         {
             connection = new SqliteConnection("Data Source=Telegrams.db");
             connection.Open();
-            m_sqlCmd = new SqliteCommand();
-            try
-            {
-                m_sqlCmd.Connection = connection;
-                m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  WHEN_DATE DATE, G_UCHASTOK TEXT, N_STN INTEGER, START_STOP INTEGER, ERASE INTEGER, BREAK INTEGER, REPLACE INTEGER, COUNTER INTEGER, SEND_STATE INTEGER)";
-                m_sqlCmd.ExecuteNonQuery();
-                m_sqlCmd.CommandText = "CREATE INDEX IF NOT EXISTS  ind_send_state ON Catalog(send_state)";
-                m_sqlCmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
+            using (SqliteCommand m_sqlCmd = connection.CreateCommand())
+            { 
+                try
+                {
+                    m_sqlCmd.Connection = connection;
+                    m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  WHEN_DATE DATE, G_UCHASTOK TEXT, N_STN INTEGER, START_STOP INTEGER, ERASE INTEGER, BREAK INTEGER, REPLACE INTEGER, COUNTER INTEGER, SEND_STATE INTEGER)";
+                    m_sqlCmd.ExecuteNonQuery();
+                    m_sqlCmd.CommandText = "CREATE INDEX IF NOT EXISTS  ind_send_state ON Catalog(send_state)";
+                    m_sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
         internal bool insertTestString(TelegramParser Tpars)
@@ -52,17 +53,20 @@ namespace ConsoleApp2
             connection = new SqliteConnection("Data Source=Telegrams.db");
             connection.Open();
 
-            try
+            using (SqliteCommand m_sqlCmd = connection.CreateCommand())
             {
-                m_sqlCmd.Connection = connection;
-                m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  WHEN_DATE DATE, G_UCHASTOK TEXT, N_STN INTEGER, START_STOP INTEGER, ERASE INTEGER, BREAK INTEGER, REPLACE INTEGER, COUNTER INTEGER, SEND_STATE INTEGER)";
-                m_sqlCmd.ExecuteNonQuery();
-                m_sqlCmd.CommandText = "CREATE INDEX IF NOT EXISTS  ind_send_state ON Catalog(send_state)";
-                m_sqlCmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
+                try
+                {
+                    m_sqlCmd.Connection = connection;
+                    m_sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT,  WHEN_DATE DATE, G_UCHASTOK TEXT, N_STN INTEGER, START_STOP INTEGER, ERASE INTEGER, BREAK INTEGER, REPLACE INTEGER, COUNTER INTEGER, SEND_STATE INTEGER)";
+                    m_sqlCmd.ExecuteNonQuery();
+                    m_sqlCmd.CommandText = "CREATE INDEX IF NOT EXISTS  ind_send_state ON Catalog(send_state)";
+                    m_sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
         public void Close()
@@ -76,36 +80,54 @@ namespace ConsoleApp2
         }
         public bool ExecuteCommand(string CommandString)
         {
+            //try
+            //{
+            //    connection.Open();
+            //    m_sqlCmd.Connection = connection;
+            //    m_sqlCmd.CommandText = CommandString;
+            //    m_sqlCmd.ExecuteNonQuery();
+            //    return true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex);
+            //    return false;
+            //}
             try
             {
-                connection.Open();
-                m_sqlCmd.Connection = connection;
-                m_sqlCmd.CommandText = CommandString;
-                m_sqlCmd.ExecuteNonQuery();
-                return true;
+                using (SqliteCommand m_sqlCmd = connection.CreateCommand())
+                {
+                    m_sqlCmd.CommandText = CommandString;
+
+                    SqliteDataReader reader = m_sqlCmd.ExecuteReader();
+
+                    reader.Dispose();
+                    Console.WriteLine("SQLOK");
+                    return true;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                Console.WriteLine("SQLFAIL");
                 return false;
             }
         }
         public void StartTransaction()
         {
-            transaction = this.connection.BeginTransaction();
-            m_sqlCmd.Transaction = transaction;
-        }    
+            connection.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+        }
 
         public void CommitTransaction()
         {
-            m_sqlCmd.Transaction = transaction;
             transaction.Commit();
+            transaction.Dispose();
         }
 
         public void RollbackTransaction()
         {
-            m_sqlCmd.Transaction = transaction;
             transaction.Rollback();
+            transaction.Dispose();
         }
     }
 }
