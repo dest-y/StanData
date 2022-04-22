@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp2
+﻿namespace ConsoleApp2
 {
     internal class MThreadStan
     {
@@ -21,7 +15,7 @@ namespace ConsoleApp2
             thread.Start();
         }
 
-        void StartThread() 
+        void StartThread()
         {
             while (true)
             {

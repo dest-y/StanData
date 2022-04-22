@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace ConsoleApp2
 {
@@ -23,7 +18,7 @@ namespace ConsoleApp2
             SERVICE_NAME = "";
         }
 
-        public void SecretsInit() 
+        public void SecretsInit()
         {
             var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
             UserID = config["UserID"];

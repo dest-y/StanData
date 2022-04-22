@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sharp7;
+﻿using Sharp7;
 
 namespace ConsoleApp2
 {
@@ -58,7 +53,7 @@ namespace ConsoleApp2
                     Speed = buffer[1] * 256 + buffer[0];
 
                     WireBreakReadResult = client.MBRead(202, 1, buffer);
-                    WireBreak = buffer[0] > 0 ? true: false;
+                    WireBreak = buffer[0] > 0 ? true : false;
 
                     SpoolLifetimeReadResult = client.DBRead(141, 30, 4, dbuffer);
                     dbuffer = dbuffer.Reverse().ToArray();
@@ -79,7 +74,7 @@ namespace ConsoleApp2
                     Status = Speed > 5 ? false : true;   //Инверсия статуса false = стан в работе
 
                     ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
-                    
+
                     if (ReadResult == 0)
                     {
                         SpoolLifetimeOld = SpoolLifetimeCurrent;

@@ -12,7 +12,7 @@ namespace ConsoleApp2
             connection = new SqliteConnection("Data Source=Telegrams.db");
             connection.Open();
             using (SqliteCommand m_sqlCmd = connection.CreateCommand())
-            { 
+            {
                 try
                 {
                     m_sqlCmd.Connection = connection;

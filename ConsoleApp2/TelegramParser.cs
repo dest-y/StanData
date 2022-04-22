@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp2
+﻿namespace ConsoleApp2
 {
     internal class TelegramParser
     {
@@ -17,7 +11,7 @@ namespace ConsoleApp2
         internal int Counter = 0;
         private Stan cstan;
         internal string? TelegramData;
-        
+
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public event Action OraUpdate;
         public TelegramParser(Stan stan)
@@ -28,11 +22,11 @@ namespace ConsoleApp2
             cstan = stan;
             TelegramData = null;
         }
-        internal bool CheckUpdate() 
+        internal bool CheckUpdate()
         {
-            if (cstan.getData()) 
+            if (cstan.getData())
             {
-                Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};" ,name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
+                Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};", name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
                 if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
                 {
                     Changed = true;
@@ -54,7 +48,7 @@ namespace ConsoleApp2
             }
             return false;
         }
-        public string CreateTelegram() 
+        public string CreateTelegram()
         {
             CurrentTime.getTime();
             string stateOne = "0";
@@ -65,7 +59,7 @@ namespace ConsoleApp2
             {
                 stateOne = "8";
             }
-            else 
+            else
             {
                 stateOne = "0";
             }
@@ -82,12 +76,12 @@ namespace ConsoleApp2
                 stateThree = "1";
             }
             //Logger.Error(CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000");
-            Logger.Error( CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) +"  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter);
+            Logger.Error(CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) + "  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter);
             return CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree;
         }
 
     }
 
-        
-    
+
+
 }

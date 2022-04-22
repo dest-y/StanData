@@ -1,9 +1,4 @@
 ﻿using ConsoleApp2.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 
 namespace ConsoleApp2
@@ -15,41 +10,29 @@ namespace ConsoleApp2
 
         public OracleConnection()
         {
-            UserSecrets secret = new UserSecrets();
-            secret.SecretsInit();
-            string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);
-            con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
-            con.Open();
+            TryConnect();
         }
 
         public bool ExecuteCommand(string CommandString)
         {
-            try
+            using (OracleCommand cmd = con.CreateCommand())
             {
-                using (OracleCommand cmd = con.CreateCommand())
-                {
 
-                    cmd.BindByName = true;
-                    cmd.CommandText = CommandString;
+                cmd.BindByName = true;
+                cmd.CommandText = CommandString;
 
-                    OracleDataReader reader = cmd.ExecuteReader();
+                OracleDataReader reader = cmd.ExecuteReader();
 
-                    reader.Dispose();
-                    Console.WriteLine("OraOK");
-                    return true;
-                }
+                reader.Dispose();
+                Console.WriteLine("OraOK");
+                return true;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Console.WriteLine("OraFail");
-                return false;
-            }
+
         }
         public void Close()
         {
             con.Close();
-            Console.WriteLine(con.State); 
+            Console.WriteLine(con.State);
         }
         public void Create()
         {
@@ -57,29 +40,54 @@ namespace ConsoleApp2
             secret.SecretsInit();
             string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);
             con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
+            con.Open();
         }
         public void Restart()
         {
-            this.Close();
-            this.Create();
+            try
+            {
+                this.Close();
+                this.Create();
+                Console.WriteLine("Попытка переподлючения к Oracle");
+                Console.WriteLine(this.con.State);
+            }
+            catch
+            {
+                Console.WriteLine("Невозможно создать подлючение к Oracle");
+            }
         }
-        public void StartTransaction() 
+        public void StartTransaction()
         {
-            Console.WriteLine(con);
-            transaction = this.con.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+            if (con.State == System.Data.ConnectionState.Open)
+                transaction = this.con.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
         }
         public void CommitTransaction()
         {
             if (transaction != null)
-            transaction.Commit();
+                transaction.Commit();
             Console.WriteLine("ORA COMMIT");
         }
         public void RollbackTransaction()
         {
             Console.WriteLine("ORA ROLLBACK");
-            if (transaction != null)
-            transaction.Rollback();
+            if (transaction != null && con.State == System.Data.ConnectionState.Open)
+                transaction.Rollback();
         }
-        
+        public void TryConnect()
+        {
+            try
+            {
+                UserSecrets secret = new UserSecrets();
+                secret.SecretsInit();
+                string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);
+                con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
+                con.Open();
+            }
+            catch
+            {
+                Console.WriteLine("Cant Connect to ORACLE DB");
+            }
+        }
+
     }
 }
