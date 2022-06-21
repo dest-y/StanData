@@ -1,8 +1,8 @@
 ﻿using Sharp7;
 internal abstract class Stan
 {
-    internal string Name;
-    internal string IpAddress;
+    public string Name;
+    public string IpAddress;
     internal int Counter;
     internal bool Status;
     internal bool WireBreak;

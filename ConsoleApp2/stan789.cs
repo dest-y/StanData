@@ -77,7 +77,8 @@ namespace ConsoleApp2
                     if (ReadResult == 0)
                     {
                         SpoolLifetimeOld = SpoolLifetimeCurrent;
-                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
+                        //
+                        //.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
                     }
                     return true;
                 }

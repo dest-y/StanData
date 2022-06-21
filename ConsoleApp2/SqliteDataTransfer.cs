@@ -5,6 +5,8 @@ namespace ConsoleApp2
 
     internal class SqliteDataTransfer : SqliteClass
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         OracleConnection OraCon;
         public SqliteDataTransfer(OracleConnection OraConnection)
         {
@@ -21,7 +23,7 @@ namespace ConsoleApp2
                     try
                     {
                         m_sqlCmd.Connection = connection;
-                        m_sqlCmd.CommandText = "SELECT Catalog.*, count(*) over() conter FROM [Catalog] WHERE [send_state] = 0";
+                        m_sqlCmd.CommandText = "SELECT Catalog.*, count(*) over() conter FROM [Catalog] WHERE [send_state] = 0 LIMIT 5";
                         m_sqlCmd.ExecuteNonQuery();
                         SqliteDataReader sqlReader = m_sqlCmd.ExecuteReader();
 
@@ -61,9 +63,6 @@ namespace ConsoleApp2
                                 if (count == 0)
                                     OraCon.StartTransaction();
                                 
-                                if (count > 1)
-                                    OraCon.con.Close();
-
                                 OraCon.ExecuteCommand(j + n);
 
                                 //OracleClass.ExecuteOraCommand(j + n);
@@ -108,6 +107,9 @@ namespace ConsoleApp2
                     }
                     catch (Exception ex)
                     {
+                        Logger.Debug(ex);
+                        Logger.Debug("NEWLINE");
+
                         Console.WriteLine("Ошибка записи в удаленную БД ORACLE");
                         OraCon.RollbackTransaction();
                         return 0;

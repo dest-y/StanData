@@ -5,6 +5,8 @@ namespace ConsoleApp2
 {
     internal class OracleConnection : IConnectionHandler
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public Oracle.ManagedDataAccess.Client.OracleConnection con;
         internal OracleTransaction transaction;
 
@@ -51,9 +53,11 @@ namespace ConsoleApp2
                 Console.WriteLine("Попытка переподлючения к Oracle");
                 Console.WriteLine(this.con.State);
             }
-            catch
+            catch (Exception ex)
             {
                 Console.WriteLine("Невозможно создать подлючение к Oracle");
+                Logger.Debug(ex);
+                Logger.Debug("NEWLINE");
             }
         }
         public void StartTransaction()
@@ -83,8 +87,10 @@ namespace ConsoleApp2
                 con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
                 con.Open();
             }
-            catch
+            catch(Exception ex)
             {
+                Logger.Debug(ex);
+                Logger.Debug("NEWLINE");
                 Console.WriteLine("Cant Connect to ORACLE DB");
             }
         }
