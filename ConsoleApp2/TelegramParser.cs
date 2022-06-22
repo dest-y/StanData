@@ -26,7 +26,7 @@
         {
             if (cstan.getData())
             {
-                Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};", name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
+                //Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};", name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
                 if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
                 {
                     Changed = true;
@@ -76,7 +76,7 @@
                 stateThree = "1";
             }
             //Logger.Error(CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree + "0000");
-            Logger.Error(CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) + "  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter);
+            Logger.Info(CurrentTime.getTime() + "D" + "  " + cstan.Name + "  " + Convert.ToInt32(cstan.Status) + "  " + Convert.ToInt32(cstan.CointerErase) + "  " + Convert.ToInt32(cstan.WireBreak) + "  " + Convert.ToInt32(DrawingChange) + "  " + cstan.Counter);
             return CurrentTime.getTime() + " " + "S" + "01" + "D" + cstan.Name.PadLeft(3, '0') + cstan.Counter.ToString().PadLeft(6, '0') + stateOne + stateTwo + stateThree;
         }
 

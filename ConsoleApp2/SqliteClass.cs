@@ -102,7 +102,7 @@ namespace ConsoleApp2
                     SqliteDataReader reader = m_sqlCmd.ExecuteReader();
 
                     reader.Dispose();
-                    Console.WriteLine("SQLOK");
+                    //Console.WriteLine("SQLOK");
                     return true;
                 }
             }
@@ -115,7 +115,7 @@ namespace ConsoleApp2
         }
         public void StartTransaction()
         {
-            connection.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+            transaction = this.connection.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
         }
 
         public void CommitTransaction()

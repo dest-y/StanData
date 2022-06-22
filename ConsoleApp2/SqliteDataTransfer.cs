@@ -3,16 +3,22 @@
 namespace ConsoleApp2
 {
 
-    internal class SqliteDataTransfer : SqliteClass
+    internal class SqliteDataTransfer : IDisposable
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         OracleConnection OraCon;
+        SqliteConnection connection;
         public SqliteDataTransfer(OracleConnection OraConnection)
         {
             connection = new SqliteConnection("Data Source=Telegrams.db");
             connection.Open();
             OraCon = OraConnection;
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine("связть между LocalDB и Oracle разорвана");
         }
 
         internal Int64 TransferNotPostedTelegrams()

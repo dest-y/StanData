@@ -50,9 +50,7 @@ namespace ConsoleApp2
                     int SpoolLifetimeReadResult;
                     int ReadResult;
 
-                    CointerReadResult = client.DBRead(66, 210, 4, dbuffer);
-                    int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
-                    Counter = tmp;
+                    
 
                     DrawingChangeReadResult = client.DBRead(251, 8, 2, buffer);
                     bool D01DB251DBX = S7.GetBitAt(buffer, 1, 1);
@@ -73,14 +71,24 @@ namespace ConsoleApp2
 
                     DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
 
+                    if (CointerErase) 
+                    {
+                        return true;
+                    }
+
+                    CointerReadResult = client.DBRead(66, 210, 4, dbuffer);
+                    int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
+                    Counter = tmp;
+
                     ReadResult = CointerReadResult + DrawingChangeReadResult + StatusReadResult + WireBreakReadResult + SpoolLifetimeReadResult;
                     if (ReadResult == 0)
                     {
                         SpoolLifetimeOld = SpoolLifetimeCurrent;
+                        return true;
                         //
                         //.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв: {3}; Смена волок: {4};Сброс счётчика: {5};Время жизни волок: {6};", Name, Counter, !Status, WireBreak, DrawingChange, CointerErase, SpoolLifetimeCurrent);
                     }
-                    return true;
+                    return false;
                 }
                 else 
                 {

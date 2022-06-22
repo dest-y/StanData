@@ -47,7 +47,7 @@ namespace ConsoleApp2
                     int SpeedReadResult;
                     int SpoolLifetimeReadResult;
 
-                    CointerErase = false;               //реализация нажатия обнуления счетчика.
+                    
 
                     SpeedReadResult = client.DBRead(11, 40, 2, buffer);
                     Speed = buffer[1] * 256 + buffer[0];
@@ -62,6 +62,19 @@ namespace ConsoleApp2
                     CointerReadResult = client.DBRead(11, 20, 4, dbuffer);
                     int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
 
+                    if (CointerErase)
+                    {
+                        Counter = 0;
+
+                        DrawingChange = SpoolLifetimeCurrent > SpoolLifetimeOld ? true : false;
+                        Status = Speed > 5 ? false : true;   //Инверсия статуса false = стан в работе
+
+                        CointerErase = false;
+
+                        return true;
+                    }
+
+                    CointerErase = false;               //реализация нажатия обнуления счетчика.
                     if (Counter > tmp)                   //реализация нажатия обнуления счетчика.
                     {                                    //реализация нажатия обнуления счетчика.            
                         CointerErase = true;             //реализация нажатия обнуления счетчика.     
@@ -81,7 +94,7 @@ namespace ConsoleApp2
                         //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetimeCurrent, Speed);
                         return true;
                     }
-                    return true;
+                    return false;
                 }
                 else
                 {

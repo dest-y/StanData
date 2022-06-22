@@ -83,8 +83,7 @@ namespace ConsoleApp2
             {
                 UserSecrets secret = new UserSecrets();
                 secret.SecretsInit();
-                string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);
-                con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
+                string conString = string.Format("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT=1521))(CONNECT_DATA=(SERVICE_NAME={1})));User ID={2};Password={3};", secret.HOST, secret.SERVICE_NAME, secret.UserID, secret.Password);                con = new Oracle.ManagedDataAccess.Client.OracleConnection(conString);
                 con.Open();
             }
             catch(Exception ex)
