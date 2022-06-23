@@ -18,7 +18,7 @@ async Task OraUpdateAsync()
 }
 
 
-string path = "json2.json";
+string path = "StanConfig.json";
 string text;
 // асинхронное чтение
 using (StreamReader reader = new StreamReader(path))
@@ -28,13 +28,13 @@ using (StreamReader reader = new StreamReader(path))
 }
 
 
-Dictionary<string, string> htmlAttributes = JsonConvert.DeserializeObject<Dictionary<string, string>>(text);
+Dictionary<string, string> StansConfig = JsonConvert.DeserializeObject<Dictionary<string, string>>(text);
 
 var Stanss = new List<Stan>();
 var StanssParser = new List<TelegramParser>();
 var MThreadStan = new List<MThreadStan>();
 
-foreach (var (key, value) in htmlAttributes)
+foreach (var (key, value) in StansConfig)
 {
     Stan stan;
     TelegramParser stanParser;

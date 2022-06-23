@@ -24,4 +24,13 @@
     <Folder Include="Config\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="StanConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

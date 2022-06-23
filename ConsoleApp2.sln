@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SranData(7-11)", "ConsoleApp2\SranData(7-11).csproj", "{A4DC0CD0-7FB6-4D64-A345-4078612CFE0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StanData(7-11)", "ConsoleApp2\StanData(7-11).csproj", "{A4DC0CD0-7FB6-4D64-A345-4078612CFE0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
