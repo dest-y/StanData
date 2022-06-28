@@ -32,7 +32,7 @@ namespace ConsoleApp2
             try
             {
                 string sqlQuery = "INSERT INTO Catalog (WHEN_DATE, G_UCHASTOK, N_STN, START_STOP, ERASE, BREAK, REPLACE, COUNTER, SEND_STATE) ";
-                sqlQuery += string.Format("VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})", CurrentTime.getTime(), "'D'", Convert.ToInt32(Tpars.name), Convert.ToInt32(!Tpars.status), Convert.ToInt32(Tpars.CointerErase), Convert.ToInt32(Tpars.WireBreak), Convert.ToInt32(Tpars.DrawingChange), Convert.ToInt32(Tpars.Counter), 0);
+                sqlQuery += string.Format("VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})", CurrentTime.getTime(), "'D'", Convert.ToInt32(Tpars.name), Convert.ToInt32(!Tpars.status), Convert.ToInt32(Tpars.CointerErase), Convert.ToInt32(Tpars.WireBreak), Convert.ToInt32(Tpars.DrawingChange), Tpars.Counter, 0);
                 ExecuteCommand(sqlQuery);
                 return true;
             }

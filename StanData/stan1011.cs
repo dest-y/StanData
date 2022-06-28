@@ -59,9 +59,20 @@ namespace ConsoleApp2
                     dbuffer = dbuffer.Reverse().ToArray();
                     SpoolLifetimeCurrent = BitConverter.ToSingle(dbuffer, 0);
 
-                    CointerReadResult = client.DBRead(11, 20, 4, dbuffer);
-                    int tmp = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
+                    int tmp1 = dbuffer[0] * 16777216 + dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];
 
+                    CointerReadResult = client.DBRead(11, 20, 4, dbuffer);                  //По старшему Биту идет сигнал?
+                    int tmp = dbuffer[1] * 65536 + dbuffer[2] * 256 + dbuffer[3];           //Переполнение Int!!!
+#if DEBUG                                                                                   //По старшему Биту идет сигнал?
+                    tmp = tmp * dbuffer[0] * 16777216;                                      //Переполнение Int!!!
+#endif
+                    //Counter = tmp;
+
+
+#if DEBUG
+                    Logger.Info("Имя стана: {0}; TMPCOINTER: {1}", Name, tmp);
+                    Logger.Info("Имя стана: {0}; dbuffer[0]: {1}; dbuffer[1]: {2}; dbuffer[2]: {3}; dbuffer[3]: {4};", Name, dbuffer[0], dbuffer[1], dbuffer[2], dbuffer[3]);
+#endif
                     if (CointerErase)
                     {
                         Counter = 0;
@@ -88,10 +99,14 @@ namespace ConsoleApp2
 
                     ReadResult = CointerReadResult + SpoolLifetimeReadResult + SpeedReadResult + WireBreakReadResult;
 
+#if DEBUG
+                    Logger.Info("Имя стана: {0}; SpeedReadResult: {1}; WireBreakReadResult: {2}!; SpoolLifetimeReadResult: {3}; CointerReadResult: {4}", Name, SpeedReadResult, WireBreakReadResult, SpoolLifetimeReadResult, CointerReadResult);
+                    Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetimeCurrent, Speed);
+#endif
                     if (ReadResult == 0)
                     {
                         SpoolLifetimeOld = SpoolLifetimeCurrent;
-                        //Logger.Info("Имя стана: {0}; Длина счетчика: {1}; Стан В работе: {2}!; Обрыв(>1 обрыв): {3}; Время жизни волок: {4};Скорость: {5};", Name, Counter, !Status, WireBreak, SpoolLifetimeCurrent, Speed);
+                        
                         return true;
                     }
                     return false;
