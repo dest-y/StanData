@@ -2,12 +2,13 @@
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using static StanData.WinApiHooks;
 using DWORD = System.UInt64;
 
 string mutex_id = "StanData(7-11)";
 using (Mutex mutex = new Mutex(false, mutex_id))
 {
-
+    Console.Title = "StanData";
     bool OraNowUpdateStatus = false;
     OracleConnection Oratest = new OracleConnection();
     SqliteDataTransfer SqllOra = new SqliteDataTransfer(Oratest);
@@ -16,35 +17,8 @@ using (Mutex mutex = new Mutex(false, mutex_id))
     //icon.Icon = new Icon("icon.ico");
     //icon.Visible = true;
 
-    const int MF_BYCOMMAND = 0x00000000;
-    const int SC_CLOSE = 0xF060;
-
-    [DllImport("user32.dll")]
-    static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
-
-    [DllImport("user32.dll")]
-    static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-
-    [DllImport("kernel32.dll", ExactSpelling = true)]
-    static extern IntPtr GetConsoleWindow();
-
-    DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
-
-    Console.Title = "StanData";
-
-    [DllImport("user32.dll", SetLastError = true)]
-    static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-    [DllImport("user32.dll")]
-    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("kernel32.dll")]
-    static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
-
-    [DllImport("kernel32.dll")]
-    static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
-
-
+    DeleteCloseButtuon();
+    StopConsoleMouseSelection(Console.Title);
 
     #if RELEASE
     if (!mutex.WaitOne(0, false))
@@ -74,7 +48,6 @@ using (Mutex mutex = new Mutex(false, mutex_id))
         text = await reader.ReadToEndAsync();
         Console.WriteLine(text);
     }
-
 
     Dictionary<string, string> StansConfig = JsonConvert.DeserializeObject<Dictionary<string, string>>(text);
 
@@ -106,12 +79,6 @@ using (Mutex mutex = new Mutex(false, mutex_id))
     //Stan789 stan7 = new Stan789("7", "140.80.1.1");
     //TelegramParser StanParser7 = new TelegramParser(stan7);               Ручное создание станов.
     //MThreadStan MThreadStan7 = new MThreadStan(StanParser7, 1000);
-
-    
-
-    IntPtr hwnd = FindWindow("StanData", null); //запрещаем выделение мышью
-    SetConsoleMode(hwnd, 0x0080);
-
 
 #if DEBUG
     Console.WriteLine("Сейчас в DEBUG");
