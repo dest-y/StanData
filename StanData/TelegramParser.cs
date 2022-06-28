@@ -27,7 +27,7 @@
             if (cstan.getData())
             {
                 //Logger.Info(" {0}; {1}; {2}; {3}!; {4}; {5}; {6};", name, Changed, Counter, !status, WireBreak, DrawingChange, CointerErase);
-                if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (cstan.CointerErase && !CointerErase) || (cstan.WireBreak && !WireBreak))
+                if ((cstan.DrawingChange && !DrawingChange) || (status != cstan.Status) || (!cstan.CointerErase && CointerErase) || (cstan.WireBreak && !WireBreak))
                 {
                     Changed = true;
                     OraUpdate?.Invoke();

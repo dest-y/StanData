@@ -8,9 +8,6 @@ namespace StanData
 {
         internal static class WinApiHooks
     {
-        const int MF_BYCOMMAND = 0x00000000;
-        const int SC_CLOSE = 0xF060;
-
         [DllImport("user32.dll")]
         static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
